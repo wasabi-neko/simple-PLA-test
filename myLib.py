@@ -42,7 +42,7 @@ def dataReader(fileName, includeAge=False, includeCabin=False):
 
             # start prepare the data vector
             vector = numpy.arange(9)
-            ans = row['Survived']
+            ans = int(row['Survived'])
 
             vector[0] = 1
             vector[1] = row['Pclass']
@@ -107,9 +107,28 @@ def addjustOneNode(dataVec, weightVec, ans):
     if (myAns == ans):
         return weightVec, TrainMsg(False, False)
     else:
-        weightVec += -dataVec
+        weightVec += -1 * numpy.sign(result) * dataVec
         return weightVec, TrainMsg(False, True)
-    
-            
+# END addjustOneNode
 
-# %%
+
+def trainModel(dataList, ansList, counterLimit=10000):
+    weightVec = numpy.zeros(len(dataList[0]), dtype=float)
+    weightVec[0] = 1
+
+    for counter in range(counterLimit) :
+        if (counter % 1000 == 0):
+            print("count:{}".format(counter))
+        if (counter >= counterLimit):
+            break
+        counter += 1
+
+        # TODO: use maxtrix insteed maybe
+        # for every data, addjust
+        for dataVec, ans in zip(dataList, ansList):
+            weightVec, msg = addjustOneNode(dataVec, weightVec, ans);
+        
+    # end train loop
+    return weightVec
+# END trainModel
+
