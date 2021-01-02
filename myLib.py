@@ -117,18 +117,59 @@ def trainModel(dataList, ansList, counterLimit=10000):
     weightVec[0] = 1
 
     for counter in range(counterLimit) :
-        if (counter % 1000 == 0):
+        if (counter % 10000 == 0):
             print("count:{}".format(counter))
         if (counter >= counterLimit):
             break
         counter += 1
-
-        # TODO: use maxtrix insteed maybe
+         
         # for every data, addjust
         for dataVec, ans in zip(dataList, ansList):
             weightVec, msg = addjustOneNode(dataVec, weightVec, ans);
+            if msg.isIgnored == False and msg.isAddjusted == True:
+                    break;
         
     # end train loop
     return weightVec
 # END trainModel
+
+def trainModelWithMatrixMethod(dataList, ansList, counterLimit=10000000000):
+    weightVec = numpy.zeros(len(dataList[0]), dtype=int)
+    weightVec[0] = 1
+    weightVec = weightVec.T
+
+    dataMat = numpy.array(dataList, dtype=int)
+
+    print(weightVec)
+    print(weightVec.shape)
+    print(dataMat)
+
+    for counter in range(counterLimit):
+        resultVec = numpy.matmul(dataMat, weightVec)
+        for i in range(len(ansList)):
+            ans = ansList[i]
+            dataVec = dataList[i]
+            result = resultVec[i]
+
+            if result > 0:
+                myAns = 1
+            elif result < 0:
+                myAns = 0
+            else:
+                myAns = -1
+                continue
+
+            if myAns != ans:
+                weightVec = weightVec + numpy.sign(result) * -1 * dataVec
+                break
+        # END Anwser check
+        counter += 1
+        if (counter % 100000 == 0):
+            print(counter)
+    # END for each trainning trun
+    return weightVec
+
+
+
+
 
