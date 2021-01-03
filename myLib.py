@@ -2,7 +2,6 @@
 import numpy
 import csv
 from enum import Enum
-
 class TrainMsg:
     """
     the enum of trainning masseage
@@ -16,7 +15,7 @@ class TrainMsg:
 # End Class TrainMsg
 
 
-def dataReader(fileName, includeAge=False, includeCabin=False):
+def dataReader(fileName, includeAge=False, cutDataWhichHasnoAge=True, includeCabin=False, hasAns=True):
     """Read data from csv file and transform into numpy dArray
 
     Args:
@@ -35,14 +34,17 @@ def dataReader(fileName, includeAge=False, includeCabin=False):
 
         # PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
         for row in reader:
-            if includeAge and row['Age'] == '':
+            if cutDataWhichHasnoAge and row['Age'] == '':
                 continue
-            if includeAge and row['Cabin'] == '':
+            if includeCabin and row['Cabin'] == '':
                 continue
 
             # start prepare the data vector
             vector = numpy.arange(9)
-            ans = int(row['Survived'])
+            if hasAns:
+                ans = int(row['Survived'])
+            else:
+                ans = -1
 
             vector[0] = 1
             vector[1] = row['Pclass']
@@ -52,13 +54,13 @@ def dataReader(fileName, includeAge=False, includeCabin=False):
                 vector[2] = 2
             
             if includeAge and row['Age'] != '':
-                vector[3] = row['Age']
+                vector[3] = float(row['Age'])
             else:
-                vector[3] = 0
+                vector[3] = -1 
 
             vector[4] = row['SibSp']
             vector[5] = row['Parch']
-            vector[6] = float(row['Fare'])
+            vector[6] = float('0' + row['Fare'])
 
             if includeCabin and row['Cabin'] != '':
                 vector[7] = 1
@@ -125,9 +127,9 @@ def trainModel(dataList, ansList, counterLimit=10000):
          
         # for every data, addjust
         for dataVec, ans in zip(dataList, ansList):
-            weightVec, msg = addjustOneNode(dataVec, weightVec, ans);
+            weightVec, msg = addjustOneNode(dataVec, weightVec, ans)
             if msg.isIgnored == False and msg.isAddjusted == True:
-                    break;
+                    break
         
     # end train loop
     return weightVec
