@@ -76,7 +76,7 @@ xLabel = ['male', 'female']
 plt.bar(plotX, plotY, tick_label=xLabel, color=['blue', 'red'])
 plt.ylabel('survived rate')
 plt.title('relationship between sex and survivedRate')
-plt.savefig('sex&survivedRate.png')
+plt.savefig('result-img/sex-and-survivedRate.png')
 plt.show()
 
 # AGE
@@ -93,7 +93,7 @@ for i in range(8):
 
 plt.bar(plotX, plotY, tick_label=xLabel,color=['aqua'])
 plt.title('relationship between age and survivedRate')
-plt.savefig('age&survivedRate.png')
+plt.savefig('result-img/age-and-survivedRate.png')
 plt.show()
 
 
